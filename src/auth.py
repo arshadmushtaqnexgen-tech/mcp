@@ -45,8 +45,8 @@ def load_config() -> dict:
         cfg["client_id"] = os.environ["MCP_DATA_TWELVE_DATA_CLIENT_ID"]
     if os.environ.get("MCP_DATA_TWELVE_DATA_CLIENT_SECRET"):
         cfg["client_secret"] = os.environ["MCP_DATA_TWELVE_DATA_CLIENT_SECRET"]
-        
-    cfg["api_key"] = "9cea98bddd904b6a8481cc7004ec8018"
+    if os.environ.get("TWELVE_DATA_API_KEY"):
+        cfg["api_key"] = os.environ["TWELVE_DATA_API_KEY"]
 
     return cfg
 
