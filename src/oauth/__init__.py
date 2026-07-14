@@ -68,20 +68,19 @@ def build_auth():
 
 
 def resolve_apikey() -> Optional[str]:
-    """Return the Twelve Data api_token for the authenticated OAuth request.
-
-    Reads the access token the SDK validated for this request, takes the bound
-    user_id, and looks up that user's api_token in the durable store. Returns
-    None when there is no authenticated OAuth user (e.g. stdio / OAuth disabled).
-    """
+    """Return the Twelve Data API key for the current request."""
+    import os
     try:
         from mcp.server.auth.middleware.auth_context import get_access_token
-
         token = get_access_token()
         user_id = getattr(token, "user_id", None) if token else None
-        if not user_id:
-            return None
-        from store import store
-        return store.get_user_token(user_id)
-    except Exception:  # pragma: no cover
-        return None
+
+        if user_id:
+            from store import store
+            api_key = store.get_user_token(user_id)
+            if api_key:
+                return api_key
+    except Exception:
+        pass
+    # Fallback for self-hosted Horizon deployments
+    return os.getenv("TWELVE_DATA_API_KEY")
